@@ -9,9 +9,6 @@ import notFoundPage from './pages/notfound.js';
 
 async function boot() {
   try {
-    // Load sql.js from CDN
-    await loadScript('https://sql.js.org/dist/sql-wasm.js');
-
     // Initialize database
     await initDB();
 
@@ -47,16 +44,6 @@ async function boot() {
     msg.appendChild(pre);
     app.appendChild(msg);
   }
-}
-
-function loadScript(src) {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = src;
-    script.onload = resolve;
-    script.onerror = () => reject(new Error(`Failed to load ${src}`));
-    document.head.appendChild(script);
-  });
 }
 
 boot();

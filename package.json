@@ -1,0 +1,10 @@
+{
+  "name": "credit-union-frontend",
+  "private": true,
+  "scripts": {
+    "build": "esbuild js/app.js --bundle --format=iife --outfile=dist/bundle.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  }
+}

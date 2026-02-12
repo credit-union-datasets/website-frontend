@@ -2,14 +2,11 @@ let db = null;
 const cache = new Map();
 
 export async function initDB() {
-  const SQL = await initSqlJs({
-    locateFile: file => `https://sql.js.org/dist/${file}`
-  });
-
-  const response = await fetch('data/beautiful_data.db');
-  const buffer = await response.arrayBuffer();
+  const [SQL, buffer] = await Promise.all([
+    initSqlJs({ locateFile: file => `vendor/${file}` }),
+    fetch('data/beautiful_data.db').then(r => r.arrayBuffer())
+  ]);
   db = new SQL.Database(new Uint8Array(buffer));
-
   return db;
 }
 
