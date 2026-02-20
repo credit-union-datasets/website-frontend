@@ -1,0 +1,41 @@
+name: Build SQLite Database
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout website-frontend
+        uses: actions/checkout@v4
+
+      - name: Clone dataset repos
+        run: |
+          git clone --depth 1 https://github.com/credit-union-datasets/credit-union-ncua.git data-sources/credit-union-ncua
+          git clone --depth 1 https://github.com/credit-union-datasets/credit-union-websites.git data-sources/credit-union-websites
+          git clone --depth 1 https://github.com/credit-union-datasets/credit-union-membership.git data-sources/credit-union-membership
+          git clone --depth 1 https://github.com/credit-union-datasets/credit-union-hysa.git data-sources/credit-union-hysa
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build database
+        run: python scripts/build_database.py data-sources
+
+      - name: Move database to data directory
+        run: mv data-sources/beautiful_data.db data/beautiful_data.db
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/beautiful_data.db
+          git diff --cached --quiet && echo "No changes to commit" && exit 0
+          git commit -m "Rebuild beautiful_data.db from latest dataset sources"
+          git push
